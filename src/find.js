@@ -15,7 +15,7 @@ export default class Find extends Component {
   async onFetch() {
     this.setState({ loading: LoadingState.LOADING });
     try {
-      let response = await fetch('http://localhost:3000/');
+      let response = await fetch('https://profound-server.herokuapp.com/');
       let responseJson = await response.json();
       this.setState({ loading: LoadingState.LOADED, data: responseJson.foo });
     } catch(err) {
