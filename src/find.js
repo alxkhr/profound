@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
+import SwipeCards from 'react-native-swipe-cards';
+import Flier from './flier';
 
 export default class Find extends Component {
   constructor(props) {
@@ -7,17 +9,21 @@ export default class Find extends Component {
     this.state = {
       loading: LoadingState.ERROR,
       error: 'Check your connection and reload.',
-      data: null,
+      fliers: [],
     };
     this.onFetch = this.onFetch.bind(this);
+  }
+
+  async componentDidMount() {
+    await this.onFetch();
   }
 
   async onFetch() {
     this.setState({ loading: LoadingState.LOADING });
     try {
-      let response = await fetch('https://profound-server.herokuapp.com/');
-      let responseJson = await response.json();
-      this.setState({ loading: LoadingState.LOADED, data: responseJson.foo });
+      const response = await fetch('https://profound-server.herokuapp.com/');
+      const { fliers } = await response.json();
+      this.setState({ loading: LoadingState.LOADED, fliers }); // TODO get fliers, not foo
     } catch(err) {
       let error = 'unknown error';
       if (err && err.message) error = err.message;
@@ -25,24 +31,34 @@ export default class Find extends Component {
     }
   }
 
+  renderError(error, reload) {
+    return function fn() {
+      return (
+        <View style={styles.container}>
+          <Text>{error}</Text>
+          <Button onPress={reload} title="fetch" />
+        </View>
+      );
+    }
+  }
+
   render() {
-    switch (this.state.loading) {
+    const { loading, fliers, error } = this.state;
+    switch (loading) {
       case LoadingState.LOADING:
         return <View style={styles.container}><Text>Loading...</Text></View>;
       case LoadingState.LOADED:
         return (
-          <View style={styles.container}>
-            <Text>{this.state.data}</Text>
-            <Button onPress={this.onFetch} title="fetch" />
-          </View>
+          <SwipeCards
+            cards={fliers}
+            renderCard={(flierProps) => <Flier {...flierProps} />}
+            renderNoMoreCards={this.renderError('no more cards', this.onFetch)}
+            handleYup={function fn() { console.log('yup'); }}
+            handleNope={function fn() { console.log('nope'); }}
+          />
         );
       case LoadingState.ERROR:
-        return (
-          <View style={styles.container}>
-            <Text>{this.state.error}</Text>
-            <Button onPress={this.onFetch} title="fetch" />
-          </View>
-        );
+        return this.renderError(error, this.onFetch)();
       default:
         return <View><Text>Invalid Loading State</Text></View>;
     }
