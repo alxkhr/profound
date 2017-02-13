@@ -21,7 +21,7 @@ export default class Find extends Component {
   async onFetch() {
     this.setState({ loading: LoadingState.LOADING });
     try {
-      const response = await fetch('https://profound-server.herokuapp.com/');
+      const response = await fetch('https://profound-server.herokuapp.com/discover');
       const { fliers } = await response.json();
       this.setState({ loading: LoadingState.LOADED, fliers }); // TODO get fliers, not foo
     } catch(err) {
@@ -66,7 +66,6 @@ export default class Find extends Component {
 }
 
 const LoadingState = {
-
   LOADING: 'loading',
   LOADED: 'loaded',
   ERROR: 'error',
@@ -79,6 +78,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
+
 // const styles = StyleSheet.create({
 //   container: {
 //     flex: 1,

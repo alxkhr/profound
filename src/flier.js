@@ -1,17 +1,17 @@
 import React, { PropTypes } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-export default function Flier({ text, bColor }) {
+export default function Flier({ name, color }) {
   return (
-    <View style={[styles.card, { backgroundColor: bColor }]}>
-      <Text style={{ color: 'white' }}>{text}</Text>
+    <View style={[styles.card, { backgroundColor: color }]}>
+      <Text style={{ color: 'black' }}>{name}</Text>
     </View>
   );
 }
 
 Flier.propTypes = {
-  text: PropTypes.string,
-  bColor: PropTypes.string,
+  name: PropTypes.string,
+  color: PropTypes.string,
 };
 
 const styles = StyleSheet.create({
